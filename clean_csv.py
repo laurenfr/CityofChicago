@@ -1,5 +1,3 @@
-from operator import itemgetter
-import os
 import csv
 
 def clean_csv(filename, cutby):
@@ -14,10 +12,22 @@ def clean_csv(filename, cutby):
 	for row in read_original:
 		# loops through rows of file
 		new_row = row
+		# make room for new column
+		new_row.append('')
+		if new_row[8] == 'location':
+			new_row[8] = 'latitude'
+			new_row[9]= 'longitude'
 		if '#' in new_row[1]:
 			new_row[1] = new_row[1].replace("#", "No. ")
 		if '#' in new_row[2]:
 			new_row[2] = new_row[2].replace("#", "No. ")
+		# separates coordinates into longitude and latitude
+		coordinates = new_row[8].split(',')
+		for coordinate in coordinates:
+			if '(' in coordinate:
+				new_row[8] = coordinate.replace('(','')
+			elif ')' in coordinate:
+				new_row[9] = coordinate.replace(')','')
 		entry = str(row[cutby])
 		splitting = entry.split(',')
 		count = len(splitting)-1
@@ -33,4 +43,5 @@ def clean_csv(filename, cutby):
 	del new_file
 	del wr_new_file
 
-clean_csv('CTA_-_Ridership_-_Avg._Weekday_Bus_Stop_Boardings_in_October_2012.csv',3)
+clean_csv('CTA_-_Ridership_-_Avg._Weekday_Bus_Stop_Boardings_in_October_2012.csv'\
+			,3)
